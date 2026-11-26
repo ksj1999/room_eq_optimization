@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "room-eq"
+version = "0.1.0"
+description = "Multi-position parametric room equalization experiments"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "matplotlib==3.10.9",
+    "numpy==2.4.4",
+    "pandas==3.0.2",
+    "PyYAML==6.0.3",
+    "scipy==1.17.1",
+]
+
+[dependency-groups]
+dev = ["pytest==8.4.2"]
+
+[project.scripts]
+room-eq-data = "room_eq.data:main"
+room-eq-smoke = "room_eq.smoke:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,7 @@
+intermediate_budget: 250
+candidate_schedules:
+  - [8.0, 4.0, 2.0]
+  - [18.0, 6.0, 2.0]
+  - [32.0, 8.0, 2.0]
+pilot_start_seeds: [5101, 5102]
+pilot_fold_seed: 5103

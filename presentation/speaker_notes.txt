@@ -1,0 +1,79 @@
+Robust Multi-Position Parametric Room Equalization
+CSE 5403 — 17 minutes of planned speaking time
+
+1. Title — 0:40
+Introduce the engineering problem and the optimization method. The study
+uses measured room responses and fits a single equalizer for a listening
+area. The three main outcomes concern stationarity, spatial transfer, and
+the effect of warm starts.
+
+2. Research question — 1:10
+Point out how the response curves differ before correction. A shared
+filter applies the same dB correction at each frequency to all positions.
+Define single-seat, mean, and robust EQ. The smoke-test curves show
+the kind of response change we evaluate.
+
+3. Measurements — 1:30
+Describe one source and the 5 cm grid. Explain the 25 cm gap between
+eligible training positions and the 126-point test strip. The three
+seeds provide nested measurement sets. The center anchor stays fixed
+and sets the level reference.
+
+4. Formulation — 1:50
+Define the seat loss, the log-mean-exp term, and gain regularization.
+The smooth term approaches the largest training loss at small
+temperature. Each biquad supplies gain, log center frequency, and log Q.
+Explain the individual gain bounds and the distinction between those
+bounds and the measured combined boost.
+
+5. Analytical benchmark — 1:30
+Derive the variance decomposition by expanding around the seat mean.
+The unrestricted shared correction can remove the mean-response term.
+The remaining floor is on training pooled RMSE, with the filter
+parameterization and regularizer relaxed. The gap to that floor includes
+the consequences of those relaxations and local optimization.
+
+6. Nonlinear optimization — 2:10
+Walk through the shared Jacobian and the seat-gradient covariance.
+Explain why the curvature approximation is positive semidefinite.
+Describe active variables, damping, clipping, and the projected Armijo
+check. The projected-gradient norm is shared across the two solvers;
+curvature evaluations are recorded separately.
+
+7. Solver results — 1:40
+Compare the evaluation medians within each objective. All matched
+starts reached the common tolerance. Point to the different end values:
+the faster solver by this measure did not necessarily reach the lowest
+objective. The curves use best observed values as references.
+
+8. Acoustic results — 1:15
+Read the no-EQ and mean-EQ values as an example of the held-out
+improvement. Explain pooled versus worst-seat RMSE. The center-seat
+baseline performed well on this strip, so adding seats within the
+training region did not guarantee an improvement here.
+
+9. Spatial generalization — 1:30
+Each line connects nested counts for one seed. Read negative values as
+improvements over mean EQ. Contrast the frequency of training and
+held-out improvements, then give their median magnitudes. These
+comparisons come from repeated training splits on the same test strip.
+
+10. Temperature ablation — 1:20
+The pilot tried three geometric schedules on training subsets and
+selected 32 to 8 to 2. The early stages share the same overall call cap
+with the last stage. Every fit meets the threshold, and continuation
+trades additional calls for a lower final objective on one start.
+
+11. Initialization ablation — 1:10
+Explain how the peaks come from the median training response. Compare
+against random centers with the same gains and Q. There is a consistent
+initial improvement, but the final objective is mixed. This suggests
+that the initial objective is an incomplete predictor of where a local
+solver will finish.
+
+12. Conclusions — 1:15
+Summarize the acoustic and optimization results. The robust objective
+did help some worst training seats, while transfer to this holdout was
+weak. State the one-source, one-room, and magnitude-only limits.
+Refer to the report and reproducibility bundle for the exact splits and
+raw traces.

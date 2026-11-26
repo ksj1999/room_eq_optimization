@@ -1,0 +1,114 @@
+{
+  "dataset": {
+    "record": "https://zenodo.org/records/10852693",
+    "archive": "data\\raw\\S1-M3969_npy.zip",
+    "release_md5": "2cb598eb44bb9905560c545db7af3432",
+    "sample_rate_hz": 48000,
+    "source_xyz_m": [
+      2.0,
+      1.5,
+      0.0
+    ],
+    "plane_z_m": 0.0
+  },
+  "config": {
+    "seed": 5403,
+    "band_hz": [
+      50,
+      500
+    ],
+    "frequency_count": 128,
+    "fft_length": 32768,
+    "magnitude_floor": 1e-12,
+    "train_count": 9,
+    "test_count": 12,
+    "filter_count": 6,
+    "gain_bounds_db": [
+      -12,
+      6
+    ],
+    "q_bounds": [
+      0.3,
+      10
+    ],
+    "initial_gain_db": -1.0,
+    "initial_q": 1.0,
+    "gain_regularization": 0.01,
+    "max_nfev": 1500
+  },
+  "preprocessing": {
+    "window": "rectangular",
+    "smoothing": "none",
+    "interpolation": "linear in Hz on the dB spectrum",
+    "level_reference_db": 5.912779634127331,
+    "target_db": 0.0
+  },
+  "train_ids": [
+    1881,
+    1926,
+    1788,
+    2169,
+    2127,
+    2145,
+    1836,
+    2164,
+    1883
+  ],
+  "test_ids": [
+    2021,
+    1971,
+    1780,
+    1973,
+    1877,
+    1779,
+    2193,
+    2067,
+    1802,
+    1987,
+    1776,
+    1795
+  ],
+  "training_pooled_rmse_floor_db": 3.613636352506516,
+  "max_eq_boost_db": 8.217796517824167,
+  "solver": {
+    "method": "SciPy least_squares trf",
+    "success": true,
+    "status": 2,
+    "message": "`ftol` termination condition is satisfied.",
+    "seconds": 0.39957079995656386,
+    "nfev": 463,
+    "njev": 412
+  },
+  "training": {
+    "no_eq": {
+      "mean_seat_rmse_db": 6.926154189194622,
+      "pooled_rmse_db": 6.996591856764906,
+      "worst_seat_rmse_db": 8.736106528688568,
+      "p95_seat_rmse_db": 8.374194900776727,
+      "max_abs_deviation_db": 26.063094807423184
+    },
+    "mean_eq": {
+      "mean_seat_rmse_db": 4.391199386232004,
+      "pooled_rmse_db": 4.432647405412897,
+      "worst_seat_rmse_db": 5.273635824540434,
+      "p95_seat_rmse_db": 5.245582921551797,
+      "max_abs_deviation_db": 24.500362938204134
+    }
+  },
+  "test": {
+    "no_eq": {
+      "mean_seat_rmse_db": 6.787490301883886,
+      "pooled_rmse_db": 6.84544394422679,
+      "worst_seat_rmse_db": 8.127620476762887,
+      "p95_seat_rmse_db": 8.087391962223801,
+      "max_abs_deviation_db": 46.628396051917
+    },
+    "mean_eq": {
+      "mean_seat_rmse_db": 4.543835471818761,
+      "pooled_rmse_db": 4.618264454689795,
+      "worst_seat_rmse_db": 6.028095164909818,
+      "p95_seat_rmse_db": 5.854831514544415,
+      "max_abs_deviation_db": 39.26334044267227
+    }
+  }
+}

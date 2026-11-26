@@ -1,0 +1,48 @@
+{
+  "main_results": "results\\main",
+  "archive": "data\\raw\\S1-M3969_npy.zip",
+  "training_ids": [
+    1881,
+    1926,
+    1788,
+    2169,
+    2127,
+    2145,
+    1836,
+    2164,
+    1883
+  ],
+  "alpha": 0.5,
+  "evaluation_budget": 2500,
+  "tolerance": 0.0001,
+  "ablation_config": {
+    "intermediate_budget": 250,
+    "candidate_schedules": [
+      [
+        8.0,
+        4.0,
+        2.0
+      ],
+      [
+        18.0,
+        6.0,
+        2.0
+      ],
+      [
+        32.0,
+        8.0,
+        2.0
+      ]
+    ],
+    "pilot_start_seeds": [
+      5101,
+      5102
+    ],
+    "pilot_fold_seed": 5103
+  },
+  "chosen_schedule": [
+    32.0,
+    8.0,
+    2.0
+  ]
+}

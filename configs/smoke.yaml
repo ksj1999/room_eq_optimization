@@ -1,0 +1,14 @@
+seed: 5403
+band_hz: [50, 500]
+frequency_count: 128
+fft_length: 32768
+magnitude_floor: 1.0e-12
+train_count: 9
+test_count: 12
+filter_count: 6
+gain_bounds_db: [-12, 6]
+q_bounds: [0.3, 10]
+initial_gain_db: -1.0
+initial_q: 1.0
+gain_regularization: 0.01
+max_nfev: 1500
