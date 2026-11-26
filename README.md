@@ -1,13 +1,76 @@
 # Robust Multi-Position Parametric Room Equalization
 
-This CSE 5403 project fits a shared six-filter equalizer to measured room
-responses and evaluates it at unseen listening positions. The repository
-includes the Python implementation, experiment records, technical report,
-and presentation.
+This project designs one parametric equalizer for multiple listening positions.
+It uses measured room impulse responses to fit the equalizer and tests how
+well the same correction works at positions that were held out of the fit.
 
-The [project record](PROJECT_RECORD.md) summarizes the measured results,
-audit findings, and supporting files. The [original research plan](PROJECT_SPEC.md)
-describes the objectives and planned experiments.
+## How it works
+
+1. Convert measured MeshRIR impulse responses to decibel magnitudes at 128
+   logarithmically spaced frequencies between 50 and 500 Hz. Use a common level
+   reference from the training data.
+2. Fit a cascade of six peaking biquads with bounded gain, center frequency,
+   and Q. The mean objective averages errors across seats. The robust
+   objective mixes the average with a smooth approximation of the worst-seat error.
+3. Compare a custom projected, damped generalized Gauss–Newton solver with
+   SciPy L-BFGS-B using the same starts and bounds. Evaluate no EQ, single-seat
+   EQ, mean EQ, and robust EQ on a fixed spatial holdout.
+
+The spatial experiment uses one source and one horizontal plane. It keeps
+126 test positions at least 25 cm from the training positions and repeats
+the comparison with 3, 10, and 20 training positions.
+[Model and derivation](report/room_equalization.pdf) · [Split IDs and settings](results/main/manifest.json)
+
+## Results
+
+### Held-out room response
+
+With 20 training positions, mean EQ reduced median pooled RMSE from **7.73
+to 5.10 dB** on the held-out strip. The single-seat baseline also performed
+well on this strip.
+
+| Method | Pooled RMSE | Worst-seat RMSE |
+| --- | ---: | ---: |
+| No EQ | 7.73 dB | 9.02 dB |
+| Single-seat EQ | 4.93 dB | 6.17 dB |
+| Mean EQ | 5.10 dB | 6.32 dB |
+| Robust EQ (α = 0.5) | 5.13 dB | 6.36 dB |
+
+Values are medians across three training selections. Pooled RMSE combines
+errors across seats and frequencies. Worst-seat RMSE is the largest individual
+seat RMSE. [Full spatial scores](results/main/scores.csv)
+
+![Held-out pooled and worst-seat RMSE for 3, 10, and 20 training positions](results/main/spatial_holdout.png)
+
+Across all nine paired spatial comparisons, robust EQ improved worst-seat
+RMSE over mean EQ in **7 of 9 training comparisons** and **2 of 9 holdout
+comparisons**. The median change was −0.036 dB in training and +0.064 dB on
+the holdout. [Paired results](results/ablation/paired_spatial.csv) · [Spatial error map](results/main/spatial_map.png) · [Mean versus worst-seat tradeoff](results/main/tradeoff.png)
+
+### Solver comparison
+
+All 20 matched fits reached the shared projected-gradient tolerance.
+Gauss–Newton used fewer joint objective and gradient calls at the median.
+Its calls also computed curvature. L-BFGS-B reached the lowest observed
+objective for both losses. [Solver summary](results/main/solver_summary.csv)
+
+| Loss | Median calls, Gauss–Newton | Median calls, L-BFGS-B |
+| --- | ---: | ---: |
+| Mean | 116 | 399 |
+| Robust | 129 | 353 |
+
+![Convergence traces for Gauss–Newton and L-BFGS-B on mean and robust objectives](results/main/convergence.png)
+
+### Initialization and temperature
+
+| Experiment | Result |
+| --- | --- |
+| Temperature continuation | The selected 32 → 8 → 2 dB² schedule improved the final objective on 1 of 5 starts. Median calls rose from 129 to 233. [Run results](results/ablation/continuation_runs.csv) |
+| Peak-informed initialization | Peak placement lowered the starting objective against the median random-center start on 9 of 9 spatial splits and lowered the final objective on 4 of 9. It used a median of 18 more calls in the paired comparison. [Per-split results](results/initialization/summary.csv) |
+
+The [project record](PROJECT_RECORD.md) includes the result audit and scope
+limitations. The [original research plan](PROJECT_SPEC.md) outlines the planned
+experiments.
 
 ## Setup on Windows
 
@@ -31,7 +94,9 @@ and Jesper Brunnström and is licensed under CC BY 4.0. The pinned release is
 v1.2 and the archive lives at `data/raw/S1-M3969_npy.zip`.
 [Dataset release](https://zenodo.org/records/10852693) · [Dataset documentation and license](https://www.sh01.org/MeshRIR/)
 
-## Smoke experiment
+## Run individual experiments
+
+### Smoke experiment
 
 The default [configuration](configs/smoke.yaml) fits six peaking filters over
 50–500 Hz using nine training positions and evaluates them on twelve disjoint
@@ -47,7 +112,7 @@ individual filter bounds.
 The first smoke run reached the 300-evaluation budget. The configuration now
 allows 1,500 evaluations so SciPy can reach its stopping tolerance.
 
-## Solver and spatial experiments
+### Solver and spatial experiments
 
 ```powershell
 .\.venv\Scripts\python.exe -m room_eq.experiments
@@ -75,7 +140,7 @@ The solver figure uses the best observed objective as a plotting reference.
 Reported evaluation counts refer to joint objective and gradient calls.
 Gauss–Newton also evaluates curvature at its trial points, tracked separately.
 
-## Continuation ablation and report
+### Continuation ablation
 
 After running the main experiment, run the ablation and paired spatial analysis:
 
@@ -91,7 +156,7 @@ Results go to `results/ablation/`. The continuation JSON Lines file records
 each stage's allocation and trace. The paired CSV reports robust minus mean
 RMSE for each spatial seed and training count.
 
-## Peak initialization
+### Peak initialization
 
 ```powershell
 .\.venv\Scripts\python.exe -m room_eq.peak_ablation
